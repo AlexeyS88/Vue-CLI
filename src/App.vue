@@ -2,9 +2,10 @@
     <div class="container">
         <form class="card" @submit.prevent=" submitHandler ">
             <h1>Анкета на Vue разработчика!</h1>
-            <div class="form-control">
+            <div class="form-control" :class=" { invalid: errors.name } ">
                 <label for="name">Как тебя зовут?</label>
                 <input type="text" id="name" placeholder="Введи имя" v-model.trim=" name " ref="nameInput">
+                <small v-if=" errors.name ">{{ errors.name }}</small>
             </div>
 
             <div class="form-control">
@@ -62,32 +63,59 @@ export default {
     data ()
     {
         return {
-            name: "Antey",
+            name: "",
             age: 23,
             city: 'msk',
-            relocate: null,
+            relocate: 'yes',
             skils: [],
-            agree: false
+            agree: false,
+            errors: {
+                name: null
+            }
         };
     },
     methods: {
+        formIsValid ()
+        {
+            let isValid = true;
+            if ( this.name.length === 0 )
+            {
+                this.errors.name = "Введите ваше имя";
+                isValid = false;
+            } else
+            {
+                this.errors.name = null;
+            }
+            return isValid;
+        },
         submitHandler ( event )
         {
-            console.group( 'Form Data' );
-            console.log( 'Name:', this.name );
-            console.log( 'Name Ref:', this.$refs.nameInput.value.trim() );
-            console.log( 'Age:', this.age );
-            console.log( 'Age:', typeof this.age );
-            console.log( 'City:', this.city );
-            console.log( 'To Tokyo', this.relocate );
-            console.log( 'Skils:', this.skils );
-            console.log( 'Agree:', this.agree );
+            if ( this.formIsValid() )
+            {
+                console.group( 'Form Data' );
+                console.log( 'Name:', this.name );
+                console.log( 'Name Ref:', this.$refs.nameInput.value.trim() );
+                console.log( 'Age:', this.age );
+                console.log( 'Age:', typeof this.age );
+                console.log( 'City:', this.city );
+                console.log( 'To Tokyo', this.relocate );
+                console.log( 'Skils:', this.skils );
+                console.log( 'Agree:', this.agree );
 
-            console.groupEnd();
+                console.groupEnd();
+            }
 
         }
     }
 };
 </script>
 
-<style></style>
+<style scoped>
+.form-control small {
+    color: red;
+}
+
+.form-control.invalid input {
+    border-color: red;
+}
+</style>
